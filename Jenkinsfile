@@ -1,6 +1,10 @@
 pipeline {
     agent any
     
+    triggers {
+        githubPush()
+    }
+    
     environment {
         DOCKER_IMAGE = 'fastapi-app'
         DOCKER_TAG = "${env.BUILD_NUMBER}"
