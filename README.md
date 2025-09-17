@@ -18,6 +18,15 @@ To revert to the distributed deployment model:
 1. Recreate the infrastructure using `terraform apply` in the terraform directory
 2. Update the Jenkinsfile to use the TEST_SERVER and PROD_SERVER environment variables instead of local deployment
 
+## Webhook Configuration
+
+For automatic pipeline triggering, ensure:
+1. EC2 security group allows inbound traffic on port 8080 from GitHub's webhook IPs
+2. Jenkins URL configuration matches your EC2 public DNS/IP
+3. GitHub webhook is properly configured with your Jenkins URL + `/github-webhook/`
+4. Jenkins job has "GitHub hook trigger for GITScm polling" enabled
+5. This test change should trigger a Jenkins build if webhook is correctly configured
+
 ## Application Features
 
 - Modern responsive web interface
