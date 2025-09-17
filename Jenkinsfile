@@ -4,8 +4,9 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'fastapi-app'
         DOCKER_TAG = "${env.BUILD_NUMBER}"
-        TEST_SERVER = 'jenkins-slave-test'
-        PROD_SERVER = 'jenkins-slave-prod'
+        // Using localhost instead of remote servers since infrastructure was destroyed
+        LOCAL_TEST_PORT = '8000'
+        LOCAL_PROD_PORT = '80'
         DOCKER_CONTAINER_TEST = 'fastapi-test'
         DOCKER_CONTAINER_PROD = 'fastapi-prod'
     }
@@ -32,32 +33,25 @@ pipeline {
         
         stage('Deploy to Test Environment') {
             steps {
-                sshagent(['jenkins-ssh-key']) {
-                    sh """
-                        # Stop and remove existing container if it exists
-                        ssh ubuntu@${TEST_SERVER} "sudo docker stop ${DOCKER_CONTAINER_TEST} || true"
-                        ssh ubuntu@${TEST_SERVER} "sudo docker rm ${DOCKER_CONTAINER_TEST} || true"
-                        
-                        # Save and transfer the Docker image
-                        docker save ${DOCKER_IMAGE}:${DOCKER_TAG} | ssh ubuntu@${TEST_SERVER} "sudo docker load"
-                        
-                        # Run new container
-                        ssh ubuntu@${TEST_SERVER} "sudo docker run -d --name ${DOCKER_CONTAINER_TEST} -p 8000:8000 ${DOCKER_IMAGE}:${DOCKER_TAG}"
-                        
-                        # Verify container is running
-                        ssh ubuntu@${TEST_SERVER} "sudo docker ps | grep ${DOCKER_CONTAINER_TEST}"
-                    """
-                }
+                sh """
+                    # Stop and remove existing container if it exists
+                    docker stop ${DOCKER_CONTAINER_TEST} || true
+                    docker rm ${DOCKER_CONTAINER_TEST} || true
+                    
+                    # Run new container locally
+                    docker run -d --name ${DOCKER_CONTAINER_TEST} -p ${LOCAL_TEST_PORT}:8000 ${DOCKER_IMAGE}:${DOCKER_TAG}
+                    
+                    # Verify container is running
+                    docker ps | grep ${DOCKER_CONTAINER_TEST}
+                """
             }
             post {
                 failure {
-                    sshagent(['jenkins-ssh-key']) {
-                        sh """
-                            # Cleanup if deployment fails
-                            ssh ubuntu@${TEST_SERVER} "sudo docker stop ${DOCKER_CONTAINER_TEST} || true"
-                            ssh ubuntu@${TEST_SERVER} "sudo docker rm ${DOCKER_CONTAINER_TEST} || true"
-                        """
-                    }
+                    sh """
+                        # Cleanup if deployment fails
+                        docker stop ${DOCKER_CONTAINER_TEST} || true
+                        docker rm ${DOCKER_CONTAINER_TEST} || true
+                    """
                 }
             }
         }
@@ -72,32 +66,25 @@ pipeline {
         
         stage('Deploy to Production Environment') {
             steps {
-                sshagent(['jenkins-ssh-key']) {
-                    sh """
-                        # Stop and remove existing container if it exists
-                        ssh ubuntu@${PROD_SERVER} "sudo docker stop ${DOCKER_CONTAINER_PROD} || true"
-                        ssh ubuntu@${PROD_SERVER} "sudo docker rm ${DOCKER_CONTAINER_PROD} || true"
-                        
-                        # Save and transfer the Docker image
-                        docker save ${DOCKER_IMAGE}:${DOCKER_TAG} | ssh ubuntu@${PROD_SERVER} "sudo docker load"
-                        
-                        # Run new container
-                        ssh ubuntu@${PROD_SERVER} "sudo docker run -d --name ${DOCKER_CONTAINER_PROD} -p 80:8000 ${DOCKER_IMAGE}:${DOCKER_TAG}"
-                        
-                        # Verify container is running
-                        ssh ubuntu@${PROD_SERVER} "sudo docker ps | grep ${DOCKER_CONTAINER_PROD}"
-                    """
-                }
+                sh """
+                    # Stop and remove existing container if it exists
+                    docker stop ${DOCKER_CONTAINER_PROD} || true
+                    docker rm ${DOCKER_CONTAINER_PROD} || true
+                    
+                    # Run new container locally
+                    docker run -d --name ${DOCKER_CONTAINER_PROD} -p ${LOCAL_PROD_PORT}:8000 ${DOCKER_IMAGE}:${DOCKER_TAG}
+                    
+                    # Verify container is running
+                    docker ps | grep ${DOCKER_CONTAINER_PROD}
+                """
             }
             post {
                 failure {
-                    sshagent(['jenkins-ssh-key']) {
-                        sh """
-                            # Cleanup if deployment fails
-                            ssh ubuntu@${PROD_SERVER} "sudo docker stop ${DOCKER_CONTAINER_PROD} || true"
-                            ssh ubuntu@${PROD_SERVER} "sudo docker rm ${DOCKER_CONTAINER_PROD} || true"
-                        """
-                    }
+                    sh """
+                        # Cleanup if deployment fails
+                        docker stop ${DOCKER_CONTAINER_PROD} || true
+                        docker rm ${DOCKER_CONTAINER_PROD} || true
+                    """
                 }
             }
         }

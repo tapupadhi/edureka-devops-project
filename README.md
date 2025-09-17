@@ -10,6 +10,14 @@ This project implements a complete CI/CD pipeline for a FastAPI application usin
 - **Configuration Management**: Ansible for server configuration
 - **Application**: FastAPI-based web application with UI
 
+## Note on Deployment
+
+The Jenkinsfile has been modified to work in a local-only deployment mode, as the remote infrastructure has been destroyed. The pipeline will now deploy the application containers directly on the Jenkins server instead of on remote test and production servers.
+
+To revert to the distributed deployment model:
+1. Recreate the infrastructure using `terraform apply` in the terraform directory
+2. Update the Jenkinsfile to use the TEST_SERVER and PROD_SERVER environment variables instead of local deployment
+
 ## Application Features
 
 - Modern responsive web interface
