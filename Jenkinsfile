@@ -2,7 +2,11 @@ pipeline {
     agent any
     
     triggers {
+        // GitHub webhook trigger
         githubPush()
+        
+        // Fallback: Poll SCM as a backup trigger method
+        pollSCM('H/5 * * * *')
     }
     
     environment {
