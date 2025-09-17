@@ -1,0 +1,5 @@
+[jenkins_slaves]
+jenkins-slave-test ansible_host=test.example.com ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/id_rsa
+jenkins-slave-prod ansible_host=prod.example.com ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/id_rsa
+
+# Note: Replace test.example.com and prod.example.com with actual IP addresses after provisioning with Terraform
