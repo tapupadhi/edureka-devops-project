@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Fetch products from the API
 async function fetchProducts() {
     try {
-        const response = await fetch('/products');
+        const response = await fetch('/api/products/');
         const products = await response.json();
         
         // Clear loading message

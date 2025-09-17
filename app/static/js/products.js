@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
         productsContainer.innerHTML = '<div class="loading">Loading products...</div>';
         
         // Build query string based on active filters
-        let url = '/products';
+        let url = '/api/products/';
         const params = new URLSearchParams();
         
         if (activeFilters.category) {
@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function() {
         productsContainer.innerHTML = '<div class="loading">Searching products...</div>';
         
         try {
-            const response = await fetch(`/products/search/?q=${encodeURIComponent(query)}`);
+            const response = await fetch(`/api/products/search/?q=${encodeURIComponent(query)}`);
             const products = await response.json();
             
             displayProducts(products);

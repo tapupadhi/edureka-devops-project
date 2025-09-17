@@ -28,12 +28,17 @@ app.mount("/static", StaticFiles(directory="app/static"), name="static")
 templates = Jinja2Templates(directory="app/templates")
 
 # Include routers
-app.include_router(products.router)
+app.include_router(products.router, prefix="/api")
 
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request):
     """Render the home page"""
     return templates.TemplateResponse("index.html", {"request": request, "title": "AppleBite Store"})
+
+@app.get("/products/", response_class=HTMLResponse)
+async def products_page(request: Request):
+    """Render the products page"""
+    return templates.TemplateResponse("products.html", {"request": request, "title": "Products - AppleBite Store"})
 
 @app.get("/api")
 async def api_root():
