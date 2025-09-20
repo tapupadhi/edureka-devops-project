@@ -58,7 +58,7 @@ resource "aws_security_group" "jenkins_master" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.allowed_ssh_cidr
     description = "SSH access"
   }
 
@@ -67,7 +67,7 @@ resource "aws_security_group" "jenkins_master" {
     from_port   = 8080
     to_port     = 8080
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.allowed_jenkins_cidr
     description = "Jenkins web interface"
   }
   
@@ -76,7 +76,7 @@ resource "aws_security_group" "jenkins_master" {
     from_port   = 8000
     to_port     = 8000
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.allowed_app_cidr
     description = "FastAPI test environment"
   }
   
@@ -85,7 +85,7 @@ resource "aws_security_group" "jenkins_master" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.allowed_app_cidr
     description = "FastAPI production environment"
   }
 
@@ -113,7 +113,7 @@ resource "aws_security_group" "jenkins_slave" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.allowed_ssh_cidr
     description = "SSH access"
   }
 
@@ -122,7 +122,7 @@ resource "aws_security_group" "jenkins_slave" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.allowed_app_cidr
     description = "HTTP for production environment"
   }
   
@@ -131,7 +131,7 @@ resource "aws_security_group" "jenkins_slave" {
     from_port   = 8000
     to_port     = 8000
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.allowed_app_cidr
     description = "Port for test environment"
   }
 

@@ -1,0 +1,24 @@
+# Example Terraform variables file
+# Copy this file to terraform.tfvars and modify with your own values
+# DO NOT commit terraform.tfvars to your repository!
+
+# AWS region
+aws_region = "us-east-1"
+
+# Instance types
+master_instance_type = "t2.medium"
+slave_instance_type = "t2.micro"
+
+# SSH key name - must exist in your AWS account
+ssh_key_name = "your-ssh-key-name"
+
+# VPC and subnet configuration
+vpc_cidr = "10.0.0.0/16"
+subnet_cidr = "10.0.1.0/24"
+
+# Security configuration - RESTRICT THESE FOR PRODUCTION!
+# It's highly recommended to limit these to your specific IP address
+# Example: ["123.123.123.123/32"] for a single IP
+allowed_ssh_cidr = ["0.0.0.0/0"]  # Restrict to your IP address for production
+allowed_jenkins_cidr = ["0.0.0.0/0"]  # Restrict to your IP address for production
+allowed_app_cidr = ["0.0.0.0/0"]  # Can be more open for public web apps

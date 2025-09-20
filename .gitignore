@@ -34,7 +34,23 @@ ENV/
 # Terraform
 .terraform/
 .terraform.lock.hcl
+terraform.tfstate
 terraform.tfstate.backup
+*.tfvars
+*.tfplan
+*.auto.tfvars
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# AWS credentials
+.aws/
+credentials
+config
+.boto
+aws_credentials
+aws_config
 
 # Logs
 *.log

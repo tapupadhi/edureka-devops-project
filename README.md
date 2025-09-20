@@ -139,15 +139,71 @@ For automatic pipeline triggering, ensure:
 
 ## Infrastructure Setup
 
-### AWS Setup with Terraform
+### AWS Setup with Terraform (Secure Method)
 
-1. **Configure AWS Credentials**:
+1. **Configure AWS Credentials Locally**:
    ```bash
    aws configure
    ```
+   This will store your AWS credentials in `~/.aws/credentials`. Never commit these to Git.
 
-2. **Update Terraform Variables**:
-   Edit `terraform/variables.tf` to set your SSH key name and other preferences.
+2. **Prepare Terraform Variables**:
+   ```bash
+   cd terraform
+   cp terraform.tfvars.example terraform.tfvars
+   ```
+   
+3. **Edit your terraform.tfvars file**:
+   - Set `ssh_key_name` to your existing AWS SSH key name
+   - Update `allowed_ssh_cidr`, `allowed_jenkins_cidr`, and `allowed_app_cidr` with your specific IP ranges
+   - Never commit this file to the repository
+
+4. **Apply Terraform Configuration**:
+   ```bash
+   terraform init
+   terraform plan
+   terraform apply
+   ```
+
+### Security Best Practices
+
+#### Keeping AWS Credentials Secure
+
+1. **Never commit AWS credentials to Git**:
+   - AWS credentials should be managed via environment variables or AWS CLI profiles
+   - The `.gitignore` file is set up to prevent committing credential files
+   - Use AWS IAM roles where possible instead of static credentials
+
+2. **Restrict Security Group Access**:
+   - In `terraform.tfvars`, limit SSH and Jenkins access to your IP address:
+     ```
+     allowed_ssh_cidr = ["YOUR_IP_ADDRESS/32"]
+     allowed_jenkins_cidr = ["YOUR_IP_ADDRESS/32"]
+     ```
+   - Only ports 80 and 8000 need to be publicly accessible for the web application
+
+3. **Use SSH Key Authentication**:
+   - Never hard-code SSH keys in the repository
+   - Use AWS Key Pairs for EC2 access
+   - Consider rotating keys regularly
+
+4. **Secrets Management**:
+   - For real production environments, consider using AWS Secrets Manager or HashiCorp Vault
+   - Jenkins credentials should be managed through the Jenkins credentials store
+
+5. **Managing State Files**:
+   - Terraform state files contain sensitive information
+   - For team environments, use remote state with locking (S3 + DynamoDB)
+   - The `.gitignore` file prevents committing state files
+
+#### For Contributors
+
+If you're contributing to this project or forking it:
+
+1. Always work with your own AWS credentials and resources
+2. Create your own `terraform.tfvars` file from the example provided
+3. Never commit real credentials, state files, or `.tfvars` files
+4. When developing locally, use environment-specific configuration
 
 3. **Initialize and Apply Terraform**:
    ```bash
