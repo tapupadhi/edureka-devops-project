@@ -43,14 +43,26 @@ pipeline {
             steps {
                 sh """
                     # Stop and remove existing container if it exists
+                    echo "Stopping and removing existing test container if it exists..."
                     docker stop ${DOCKER_CONTAINER_TEST} || true
                     docker rm ${DOCKER_CONTAINER_TEST} || true
                     
                     # Run new container locally
+                    echo "Starting test container on port ${LOCAL_TEST_PORT}..."
                     docker run -d --name ${DOCKER_CONTAINER_TEST} -p ${LOCAL_TEST_PORT}:8000 ${DOCKER_IMAGE}:${DOCKER_TAG}
                     
                     # Verify container is running
+                    echo "Verifying test container is running..."
                     docker ps | grep ${DOCKER_CONTAINER_TEST}
+                    
+                    # Print container logs for debugging
+                    echo "Container logs (first 30 lines):"
+                    docker logs ${DOCKER_CONTAINER_TEST} | head -30
+                    
+                    # Test application health
+                    echo "Testing application health endpoint..."
+                    sleep 5  # Give the application time to start
+                    curl -v http://localhost:${LOCAL_TEST_PORT}/health || echo "Health check failed"
                 """
             }
             post {
@@ -76,14 +88,26 @@ pipeline {
             steps {
                 sh """
                     # Stop and remove existing container if it exists
+                    echo "Stopping and removing existing production container if it exists..."
                     docker stop ${DOCKER_CONTAINER_PROD} || true
                     docker rm ${DOCKER_CONTAINER_PROD} || true
                     
                     # Run new container locally
+                    echo "Starting production container on port ${LOCAL_PROD_PORT}..."
                     docker run -d --name ${DOCKER_CONTAINER_PROD} -p ${LOCAL_PROD_PORT}:8000 ${DOCKER_IMAGE}:${DOCKER_TAG}
                     
                     # Verify container is running
+                    echo "Verifying production container is running..."
                     docker ps | grep ${DOCKER_CONTAINER_PROD}
+                    
+                    # Print container logs for debugging
+                    echo "Container logs (first 30 lines):"
+                    docker logs ${DOCKER_CONTAINER_PROD} | head -30
+                    
+                    # Test application health
+                    echo "Testing application health endpoint..."
+                    sleep 5  # Give the application time to start
+                    curl -v http://localhost:${LOCAL_PROD_PORT}/health || echo "Health check failed"
                 """
             }
             post {
