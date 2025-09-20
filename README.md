@@ -121,6 +121,17 @@ For automatic pipeline triggering, ensure:
    - Web UI: http://localhost:8000
    - API documentation: http://localhost:8000/docs
 
+### Automated Testing
+
+For comprehensive automated testing instructions, see [TESTING.md](TESTING.md)
+
+Key features of the automated testing setup:
+- GitHub Actions CI/CD pipeline
+- Docker Compose for local testing
+- Comprehensive test suite
+- Security scanning
+- Pre-commit hooks
+
 ### Docker Development
 
 1. **Build the Docker image**:

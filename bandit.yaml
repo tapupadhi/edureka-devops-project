@@ -1,0 +1,16 @@
+exclude_dirs:
+  - ".git"
+  - "venv"
+  - "__pycache__"
+  - ".pytest_cache"
+
+skips:
+  # Skip some known false positives
+  - B101  # Use of assert detected
+  - B104  # Possible binding to all interfaces
+
+# Output format
+output_format: screen
+
+# Severity level threshold
+severity: medium
