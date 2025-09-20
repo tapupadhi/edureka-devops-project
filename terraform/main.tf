@@ -53,20 +53,43 @@ resource "aws_security_group" "jenkins_master" {
   description = "Security group for Jenkins master"
   vpc_id      = aws_vpc.main.id
 
+  # SSH access
   ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "SSH access"
   }
 
+  # Jenkins web interface
   ingress {
     from_port   = 8080
     to_port     = 8080
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "Jenkins web interface"
+  }
+  
+  # FastAPI test environment
+  ingress {
+    from_port   = 8000
+    to_port     = 8000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "FastAPI test environment"
+  }
+  
+  # FastAPI production environment (HTTP)
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "FastAPI production environment"
   }
 
+  # Allow all outbound traffic
   egress {
     from_port   = 0
     to_port     = 0
@@ -85,20 +108,34 @@ resource "aws_security_group" "jenkins_slave" {
   description = "Security group for Jenkins slave"
   vpc_id      = aws_vpc.main.id
 
+  # SSH access
   ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "SSH access"
   }
 
+  # HTTP access for production environment
   ingress {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "HTTP for production environment"
+  }
+  
+  # Port for test environment
+  ingress {
+    from_port   = 8000
+    to_port     = 8000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Port for test environment"
   }
 
+  # Allow all outbound traffic
   egress {
     from_port   = 0
     to_port     = 0

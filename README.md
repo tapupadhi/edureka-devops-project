@@ -10,7 +10,25 @@ This project implements a complete CI/CD pipeline for a FastAPI application usin
 - **Configuration Management**: Ansible for server configuration
 - **Application**: FastAPI-based web application with UI
 
-## Note on Deployment
+## Infrastructure Security
+
+The project includes proper security configurations managed through Terraform:
+
+### Security Groups
+- **Jenkins Master**: Allows inbound traffic on ports:
+  - 22 (SSH access)
+  - 8080 (Jenkins web interface)
+  - 8000 (FastAPI test environment)
+  - 80 (FastAPI production environment)
+
+- **Jenkins Slaves**: Allows inbound traffic on ports:
+  - 22 (SSH access)
+  - 80 (HTTP for production environment)
+  - 8000 (Port for test environment)
+
+All security group configurations are managed programmatically through Terraform, ensuring consistent and version-controlled security settings.
+
+### Deployment Options
 
 The Jenkinsfile has been modified to work in a local-only deployment mode, as the remote infrastructure has been destroyed. The pipeline will now deploy the application containers directly on the Jenkins server instead of on remote test and production servers.
 
